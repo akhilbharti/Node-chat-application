@@ -48,7 +48,7 @@ button {
     transition: background .3s ease;
     border-radius: 25px;
     display: inline-block;
-     text-align: right;
+     text-align: center;
    
 }
 .meta{

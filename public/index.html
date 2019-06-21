@@ -13,58 +13,19 @@
 </head>
 
 <body>
-    <div class="chat">
-        <div class="chat__sidebar">
-
+    <div class="centered-form">
+        <div class="centered-form__box">
+            <h1>Join</h1>
+            <form action="/chat.html">
+                <label>Display Name</label>
+                <input type="text" name="username" placeholder="Display name" required>
+                <label>Room</label>
+                <input type="text" name="room" placeholder="Room" required>
+                <button>Join</button>
+            </form>
         </div>
-        <div class="chat__main">
-            <div id="messages" class="chat__messages">
 
-            </div>
-            <div class="compose">
-                <form id="message-form">
-                    <input name="message" placeholder="Message">
-                    <button title="Send Message"><i class="far fa-paper-plane"></i></button>
-                </form>
-                <button id="send-location" title="Send Location"><i class="fas fa-map-marked-alt"></i></button>
-            </div>
-        </div>
     </div>
-
-
-
-    <!-- template for individual message -->
-
-    <script id="message-template" type="text/html">
-        <div class="message">
-            <p class="meta">
-                <span class="message__name">some user</span>
-                <span class="message__meta">{{createdAt}}</span>
-            </p>
-            <div class="chat-body">
-                <p>{{message}}</p>
-            </div>
-        </div>
-    </script>
-
-    <script id="link-template" type="text/html">
-        <div>
-            <p>
-                <span class="message__name">some user</span>
-                <span class="message__meta">{{createdAt}}</span>
-            </p>
-            <div class="chat-body">
-                <p><a href="{{link}}" target="_blank"><i class="far fa-map" style="font-size:120px;"
-                            title="My Location"></i></a></p>
-            </div>
-        </div>
-    </script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
-    
-    <script src="/js/chat.js"></script>
 </body>
 
 </html>
