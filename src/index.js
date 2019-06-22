@@ -4,6 +4,12 @@ const app = express();
 const socketio = require("socket.io");
 const Filter = require("bad-words");
 const { generateMessage, generateLocation } = require("./utils/messages");
+const {
+  addUsers,
+  removeUser,
+  getUser,
+  getUsersInRoom
+} = require("./utils/users");
 //creating server outside express
 const server = http.createServer(app);
 const io = socketio(server);
@@ -18,8 +24,14 @@ app.use(express.static("public"));
 io.on("connection", socket => {
   console.log("New WebSocket connection");
 
-  socket.emit("message", generateMessage("Welcome!"));
-  socket.broadcast.emit("message", generateMessage("A new user has joined!"));
+  socket.on("join", ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit("message", generateMessage("Welcome!"));
+    socket.broadcast
+      .to(room)
+      .emit("message", generateMessage(`${username} has joined!`));
+  });
 
   socket.on("sendMessage", (message, callback) => {
     const fl = new Filter();
