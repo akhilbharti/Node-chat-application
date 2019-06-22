@@ -9,8 +9,9 @@ const $messages = document.querySelector("#messages");
 //templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const linkTemplate = document.querySelector("#link-template").innerHTML;
+const sideBarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
-//options
+//options query the url for queryString
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 });
@@ -25,7 +26,6 @@ socket.on("message", message => {
     createdAt: moment(message.createdAt).format("h:mm a")
   });
   $messages.insertAdjacentHTML("beforeend", html);
-  console.log(message);
 });
 
 socket.on("locationMessage", location => {
@@ -35,7 +35,15 @@ socket.on("locationMessage", location => {
     createdAt: moment(location.createdAt).format("h:mm a")
   });
   $messages.insertAdjacentHTML("beforeend", link);
-  console.log(location);
+  // console.log(location);
+});
+
+socket.on("roomData", ({ room, users }) => {
+  const html = Mustache.render(sideBarTemplate, {
+    room,
+    users
+  });
+  document.querySelector("#sidebar").innerHTML = html;
 });
 
 $messageForm.addEventListener("submit", e => {
