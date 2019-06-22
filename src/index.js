@@ -24,28 +24,40 @@ app.use(express.static("public"));
 io.on("connection", socket => {
   console.log("New WebSocket connection");
 
-  socket.on("join", ({ username, room }) => {
-    socket.join(room);
+  socket.on("join", ({ username, room }, callback) => {
+    const { error, user } = addUsers({ id: socket.id, username, room });
+    if (error) {
+      return callback(error);
+    }
+    socket.join(user.room);
 
-    socket.emit("message", generateMessage("Welcome!"));
+    socket.emit("message", generateMessage(user.username, "Welcome!"));
     socket.broadcast
-      .to(room)
-      .emit("message", generateMessage(`${username} has joined!`));
+      .to(user.room)
+      .emit(
+        "message",
+        generateMessage(user.username, `${user.username} has joined!`)
+      );
+
+    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
+    const user = getUser(socket.id);
     const fl = new Filter();
     if (fl.isProfane(message)) {
       return callback("profanity not allowed");
     }
-    io.emit("message", generateMessage(message));
+    io.to(user.room).emit("message", generateMessage(user.username, message));
     callback("delivered");
   });
 
   socket.on("sendLocation", (coords, callback) => {
-    io.emit(
+    const user = getUser(socket.id);
+    io.to(user.room).emit(
       "locationMessage",
       generateLocation(
+        user.username,
         `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
       )
     );
@@ -53,7 +65,13 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", generateMessage("A user has left!"));
+    const user = removeUser(socket.id);
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        generateMessage(`${user.username} has left!`)
+      );
+    }
   });
 });
 
